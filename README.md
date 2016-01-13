@@ -38,6 +38,46 @@ Usage
   Hello, world!
   ```
 
+* **Switch**
+
+  ```java
+  public class SwitchActionExample {
+
+      public static void main(String[] args) {
+          System.out.println("Type Either a string or an Int: ");
+
+          String in = "";
+          Either<String, Integer> either;
+          try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+              in = reader.readLine();
+              either = Either.right(Integer.parseInt(in));
+          } catch (NumberFormatException | IOException e) {
+              either = Either.left(in);
+          }
+
+          either.fold(
+              s -> {
+                  System.out.println("You passed me the String: " + s);
+              },
+              x -> {
+                  System.out.println(
+                          "You passed me the Int: " + x
+                                  + ", which I will increment. " + x + " + 1 = "
+                                  + (x + 1));
+              });
+      }
+  }
+  ```
+
+  Prints:
+
+  ```
+  Type Either a string or an Int:
+  1
+  You passed me the Int: 1, which I will increment. 1 + 1 = 2
+  ```
+
+
 Download
 --------
 Maven:
