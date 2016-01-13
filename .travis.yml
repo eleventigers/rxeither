@@ -3,6 +3,9 @@ language: java
 jdk:
   - oraclejdk8
 
+after_success:
+  - .buildscript/deploy_snapshot.sh
+
 branches:
   except:
     - gh-pages
@@ -11,3 +14,10 @@ notifications:
   email: false
 
 sudo: false
+
+env:
+  global:
+    - ORG_GRADLE_PROJECT_RELEASE_REPOSITORY_URL=https://oss.sonatype.org/service/local/staging/deploy/maven2/
+    - ORG_GRADLE_PROJECT_SNAPSHOT_REPOSITORY_URL=https://oss.sonatype.org/content/repositories/snapshots/
+    - secure: sg7eJ+IOr7GGZa7e/WT9BoBiABA/79l+jXfcCfffEQoOYnEA2ekukQzYHuoNEitmmkoqV4xD58kgtPV6DRJkC2f+gFaBa9aO746cFfMbjk7uiizMZ1yh8crKF6+Ah3+CzfMFVxjnRDekmwjD9w4SvBghPaLxkgjugZeMm8ad6ZdCumvGM9+gfSoWGTpR3m+jhGDcuwRwLAatApcFI2TOEQXn3ml8LrVSalfi/v30Aq8NXEG+VWBC1bS/E+Kq7Dk/j8ofvcCLmpnoxt8CT74Njs4ENMZEGIrCCmbKmm3MYmydi5jMrD3nsLogtS6XtlI1PvtV2cyautdF5pEqhYwm0aRSWSYEZ8Mhcq2JJtpNzkZ+hpr3/RwCRShEveRWS0C2buqxl/h39tZiCmaUdW6I2qYSKOfkGvDqONSruVkLirqTnXR0w/TEu42wzgvVv1dEqJOV6CaFxsmCjzO+6x9CLVa8XEfuZBIPkhZ0J/1OQY/W5a8/fD/P2x+x1A3dsUDmxvGoAaNCOU9rcauPDtOsYyMA5ABT5xR7lzpkr0bbUhTPQxOsrfI7tB2WZa57fhRMeceX/H7WuUJuZp9Uy5YajwNFDcWdMx7u4J63E4I6xS9m6q+Coff4YlKx50hn3mNZ2u+GLi8vsAoVrOSowjgFT5+/TWsmQAWFzqi0MxF/bz4=
+    - secure: sOW0hk4wbNXHrp8JW14EJLC53cz8F748D93O+XkNCIo/xPMhFxD12Wfz5jN8HkHxShfF1aqmEZrCz3TMjnFF+zbnio40MTTq5jJJHkB093zWYwF/+TXW1A4SpGxo8ogG7zOMUao7xtVfecwYPmhUpx25VnjJaDGaORRU8kysNUYFFLS6La7I4wCI1r5l7llWB6j4ko2qjpRW7qR2YmmDiFtqyMJZsipUGu5r0ro7RCRKg0eMvE1V1wpMtou0RLHdtneD5mAqSHXAtHvCUr8srGPvsSeJM3eGuUtW0UujJ3a0RF8mKvFrkwd7W73psdJQ8ze9nv4SpAQViq7JAWnlPb4vt0wR0bYm186WlB2AddoVKRl7vg1KpcwelcWWFwCZr377zqsySmmtM/1hnrane34sTam11O4wGt1EOY+R/JB9tHpe/iYa6wuWHmuoTujhewks6YvpyKGNSjGSzqIwsrFXvGGJrOxfCnS2PlKLtTe8AQvzQyDalnxKmIMDyF1chGIuytX+sVX/7wB9mnehRhb/y1m9Bma2qCicujEYYnBolD4YyiZDqT6rputa3UACYnu5DquKv8n2EwlV2ERrRIxO67RQHad31lG9wTXk8YfmDekAws85fdbWe7WDhmGm4fp/7DnEsWgNs//LP5VUT29AVv8wZJHo5w9BX5iEaOs=
