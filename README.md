@@ -45,12 +45,12 @@ Maven:
 <dependency>
   <groupId>net.jokubasdargis.rxeither</groupId>
   <artifactId>rxeither</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 Gradle:
 ```groovy
-compile 'net.jokubasdargis.rxeither:rxeither:1.0.0'
+compile 'net.jokubasdargis.rxeither:rxeither:1.0.1'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
