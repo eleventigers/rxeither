@@ -3,7 +3,7 @@
 set -ex
 
 REPO="git@github.com:eleventigers/rxeither.git"
-GROUP_ID="com.eleventigers.rxeither"
+GROUP_ID="net.jokubasdargis.rxeither"
 ARTIFACT_ID="rxeither"
 
 DIR=temp-clone
