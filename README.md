@@ -1,4 +1,4 @@
-RxEither
+RxEither [![Build Status](https://travis-ci.org/eleventigers/rxeither.svg?branch=master)](https://travis-ci.org/eleventigers/rxeither)
 ========
 
 Either is a value of one of two possible types.
