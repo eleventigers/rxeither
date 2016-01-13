@@ -35,4 +35,8 @@ public class SwitchActionExample {
             }
         });
     }
+
+    private SwitchActionExample() {
+        throw new AssertionError("No instances");
+    }
 }

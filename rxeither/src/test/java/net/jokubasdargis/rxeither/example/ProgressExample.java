@@ -39,5 +39,9 @@ public class ProgressExample {
             }
         });
     }
+
+    private ProgressExample() {
+        throw new AssertionError("No instances");
+    }
 }
 
