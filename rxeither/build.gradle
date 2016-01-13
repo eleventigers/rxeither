@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply from: rootProject.file('gradle/checkstyle.gradle')
+apply from: rootProject.file('gradle/mvn-push.gradle')
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+test {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    compile rootProject.ext.rxJava
+
+    testCompile rootProject.ext.junit
+    testCompile rootProject.ext.truth
+    testCompile rootProject.ext.mockito
+}
