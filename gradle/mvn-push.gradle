@@ -74,15 +74,15 @@ afterEvaluate { project ->
         sign configurations.archives
     }
 
-    task javadocs(type: Javadoc) {
+    javadoc {
         if (JavaVersion.current().isJava8Compatible()) {
             options.addStringOption('Xdoclint:none', '-quiet')
         }
     }
 
-    task javadocJar(type: Jar, dependsOn: javadocs) {
+    task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier 'javadoc'
-        from "$buildDir/javadoc"
+        from "$buildDir/docs/javadoc"
     }
 
     task sourcesJar(type: Jar) {
