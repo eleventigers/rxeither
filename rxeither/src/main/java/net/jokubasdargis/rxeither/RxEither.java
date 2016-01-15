@@ -1,6 +1,7 @@
 package net.jokubasdargis.rxeither;
 
 import rx.Observable;
+import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
@@ -55,6 +56,60 @@ public final class RxEither {
      */
     public static <L, R> Observable<R> filterRight(Observable<Either<L, R>> either) {
         return either.filter(RxEither.<L, R>isRight()).map(FoldRight.<L, R>instance());
+    }
+
+    /**
+     * Creates an {@link Action1} to lazily invoke the provided fold {@link Action1}s.
+     */
+    public static <L, R> Action1<Either<L, R>> foldLazy(Action1<L> left, Action1<R> right) {
+        return FoldLazyAction.create(left, right);
+    }
+
+    /**
+     * Creates a {@link Func1} to lazily get a fold result from the provided {@link Func1}s.
+     */
+    public static <L, R, T> Func1<Either<L, R>, T> foldLazy(Func1<L, T> left, Func1<R, T> right) {
+        return FoldLazyFunc.create(left, right);
+    }
+
+    private static class FoldLazyAction<L, R> implements Action1<Either<L, R>> {
+
+        private final Action1<L> left;
+        private final Action1<R> right;
+
+        static <L, R> Action1<Either<L, R>> create(Action1<L> left, Action1<R> right) {
+            return new FoldLazyAction<>(left, right);
+        }
+
+        @Override
+        public void call(Either<L, R> lrEither) {
+            lrEither.fold(left, right);
+        }
+
+        private FoldLazyAction(Action1<L> left, Action1<R> right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    private static class FoldLazyFunc<L, R, T> implements Func1<Either<L, R>, T> {
+
+        private final Func1<L, T> left;
+        private final Func1<R, T> right;
+
+        public static <L, R, T> Func1<Either<L, R>, T> create(Func1<L, T> left, Func1<R, T> right) {
+            return new FoldLazyFunc<>(left, right);
+        }
+
+        @Override
+        public T call(Either<L, R> lrEither) {
+            return lrEither.fold(left, right);
+        }
+
+        private FoldLazyFunc(Func1<L, T> left, Func1<R, T> right) {
+            this.left = left;
+            this.right = right;
+        }
     }
 
     private static class FoldLeft<L, R> implements Func1<Either<L, R>, L> {

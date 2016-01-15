@@ -1,7 +1,14 @@
 package net.jokubasdargis.rxeither;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 import rx.schedulers.TestScheduler;
@@ -156,5 +163,44 @@ public final class RxEitherTest {
         subscriber.assertNoErrors();
         subscriber.assertNotCompleted();
         subscriber.assertValue(eventB);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void foldLazyAction() {
+        Action1<EventA> eventAAction = mock(Action1.class);
+        Action1<EventB> eventBAction = mock(Action1.class);
+
+        Observable<Either<EventA, EventB>> either = RxEither.from(eventASubject, eventBSubject);
+
+        either.subscribe(RxEither.foldLazy(eventAAction, eventBAction));
+
+        eventASubject.onNext(eventA);
+        eventBSubject.onNext(eventB);
+        testScheduler.triggerActions();
+
+        verify(eventAAction).call(eventA);
+        verify(eventBAction).call(eventB);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void foldLazyFunc() {
+        Action1<EventA> eventAAction = mock(Action1.class);
+        Func1<EventA, EventA> eventAEventAFunc = mock(Func1.class);
+        Func1<EventB, EventA> eventBEventAFunc = mock(Func1.class);
+
+        when(eventAEventAFunc.call(eventA)).thenReturn(eventA);
+        when(eventBEventAFunc.call(eventB)).thenReturn(eventA);
+
+        Observable<Either<EventA, EventB>> either = RxEither.from(eventASubject, eventBSubject);
+
+        either.map(RxEither.foldLazy(eventAEventAFunc, eventBEventAFunc)).subscribe(eventAAction);
+
+        eventASubject.onNext(eventA);
+        eventBSubject.onNext(eventB);
+        testScheduler.triggerActions();
+
+        verify(eventAAction, times(2)).call(eventA);
     }
 }
