@@ -9,6 +9,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
     compile rootProject.ext.rxJava
+    compile rootProject.ext.rxSealedUnions
 
     testCompile rootProject.ext.junit
     testCompile rootProject.ext.truth

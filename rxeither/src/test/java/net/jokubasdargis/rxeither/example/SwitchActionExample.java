@@ -20,7 +20,7 @@ public class SwitchActionExample {
             either = Either.left(in);
         }
 
-        either.fold(new Action1<String>() {
+        either.continued(new Action1<String>() {
             @Override
             public void call(String s) {
                 System.out.println("You passed me the String: " + s);

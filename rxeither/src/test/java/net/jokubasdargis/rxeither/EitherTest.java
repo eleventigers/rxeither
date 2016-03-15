@@ -22,6 +22,7 @@ public final class EitherTest {
     private final Action1<EventB> actionB = mock(Action1.class);
 
     @Test
+    @SuppressWarnings("deprecation")
     public void foldLeftFunc() {
         Either<EventA, EventB> left = Either.left(eventA);
 
@@ -32,6 +33,7 @@ public final class EitherTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void foldLeftAction() {
         Either<EventA, EventB> left = Either.left(eventA);
 
@@ -42,6 +44,7 @@ public final class EitherTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void foldRightFunc() {
         Either<EventA, EventB> right = Either.right(eventB);
 
@@ -52,10 +55,51 @@ public final class EitherTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void foldRightAction() {
         Either<EventA, EventB> right = Either.right(eventB);
 
         right.fold(actionA, actionB);
+
+        verify(actionB).call(eventB);
+        verifyNoMoreInteractions(actionA);
+    }
+
+    @Test
+    public void joinLeft() {
+        Either<EventA, EventB> left = Either.left(eventA);
+
+        left.join(funcAA, funcBA);
+
+        verify(funcAA).call(eventA);
+        verifyNoMoreInteractions(funcBA);
+    }
+
+    @Test
+    public void continuedLeft() {
+        Either<EventA, EventB> left = Either.left(eventA);
+
+        left.continued(actionA, actionB);
+
+        verify(actionA).call(eventA);
+        verifyNoMoreInteractions(actionB);
+    }
+
+    @Test
+    public void joinRight() {
+        Either<EventA, EventB> right = Either.right(eventB);
+
+        right.join(funcAB, funcBB);
+
+        verify(funcBB).call(eventB);
+        verifyNoMoreInteractions(funcAB);
+    }
+
+    @Test
+    public void continuedRight() {
+        Either<EventA, EventB> right = Either.right(eventB);
+
+        right.continued(actionA, actionB);
 
         verify(actionB).call(eventB);
         verifyNoMoreInteractions(actionA);

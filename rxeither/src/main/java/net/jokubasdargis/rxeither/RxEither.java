@@ -48,103 +48,123 @@ public final class RxEither {
      * Filters left side of {@link Either} observable.
      */
     public static <L, R> Observable<L> filterLeft(Observable<Either<L, R>> either) {
-        return either.filter(RxEither.<L, R>isLeft()).map(FoldLeft.<L, R>instance());
+        return either.filter(RxEither.<L, R>isLeft()).map(JoinLeft.<L, R>instance());
     }
 
     /**
      * Filters right side of {@link Either} observable.
      */
     public static <L, R> Observable<R> filterRight(Observable<Either<L, R>> either) {
-        return either.filter(RxEither.<L, R>isRight()).map(FoldRight.<L, R>instance());
+        return either.filter(RxEither.<L, R>isRight()).map(JoinRight.<L, R>instance());
+    }
+
+    /**
+     * @deprecated - use {@link #continuedLazy(Action1, Action1)} instead.
+     * <p>
+     * Creates an {@link Action1} to lazily invoke the provided fold {@link Action1}s.
+     */
+    @Deprecated
+    public static <L, R> Action1<Either<L, R>> foldLazy(Action1<L> left, Action1<R> right) {
+        return continuedLazy(left, right);
+    }
+
+    /**
+     * @deprecated - use {@link #joinLazy(Func1, Func1)} instead.
+     * <p>
+     * Creates a {@link Func1} to lazily get a fold result from the provided {@link Func1}s.
+     */
+    @Deprecated
+    public static <L, R, T> Func1<Either<L, R>, T> foldLazy(Func1<L, T> left, Func1<R, T> right) {
+        return joinLazy(left, right);
     }
 
     /**
      * Creates an {@link Action1} to lazily invoke the provided fold {@link Action1}s.
      */
-    public static <L, R> Action1<Either<L, R>> foldLazy(Action1<L> left, Action1<R> right) {
-        return FoldLazyAction.create(left, right);
+    public static <L, R> Action1<Either<L, R>> continuedLazy(Action1<L> left, Action1<R> right) {
+        return ContinuedLazy.create(left, right);
     }
 
     /**
      * Creates a {@link Func1} to lazily get a fold result from the provided {@link Func1}s.
      */
-    public static <L, R, T> Func1<Either<L, R>, T> foldLazy(Func1<L, T> left, Func1<R, T> right) {
-        return FoldLazyFunc.create(left, right);
+    public static <L, R, T> Func1<Either<L, R>, T> joinLazy(Func1<L, T> left, Func1<R, T> right) {
+        return JoinLazy.create(left, right);
     }
 
-    private static class FoldLazyAction<L, R> implements Action1<Either<L, R>> {
+    private static class ContinuedLazy<L, R> implements Action1<Either<L, R>> {
 
         private final Action1<L> left;
         private final Action1<R> right;
 
         static <L, R> Action1<Either<L, R>> create(Action1<L> left, Action1<R> right) {
-            return new FoldLazyAction<>(left, right);
+            return new ContinuedLazy<>(left, right);
         }
 
         @Override
         public void call(Either<L, R> lrEither) {
-            lrEither.fold(left, right);
+            lrEither.continued(left, right);
         }
 
-        private FoldLazyAction(Action1<L> left, Action1<R> right) {
+        private ContinuedLazy(Action1<L> left, Action1<R> right) {
             this.left = left;
             this.right = right;
         }
     }
 
-    private static class FoldLazyFunc<L, R, T> implements Func1<Either<L, R>, T> {
+    private static class JoinLazy<L, R, T> implements Func1<Either<L, R>, T> {
 
         private final Func1<L, T> left;
         private final Func1<R, T> right;
 
         public static <L, R, T> Func1<Either<L, R>, T> create(Func1<L, T> left, Func1<R, T> right) {
-            return new FoldLazyFunc<>(left, right);
+            return new JoinLazy<>(left, right);
         }
 
         @Override
         public T call(Either<L, R> lrEither) {
-            return lrEither.fold(left, right);
+            return lrEither.join(left, right);
         }
 
-        private FoldLazyFunc(Func1<L, T> left, Func1<R, T> right) {
+        private JoinLazy(Func1<L, T> left, Func1<R, T> right) {
             this.left = left;
             this.right = right;
         }
     }
 
-    private static class FoldLeft<L, R> implements Func1<Either<L, R>, L> {
+    private static class JoinLeft<L, R> implements Func1<Either<L, R>, L> {
 
         @SuppressWarnings("unchecked")
-        static <L, R> FoldLeft<L, R> instance() {
-            return (FoldLeft<L, R>) Holder.INSTANCE;
+        static <L, R> JoinLeft<L, R> instance() {
+            return (JoinLeft<L, R>) Holder.INSTANCE;
         }
 
         @Override
         public L call(Either<L, R> lrEither) {
-            return lrEither.fold(Identity.<L>instance(), Nothing.<R, L>instance());
+            return lrEither.join(Identity.<L>instance(), Nothing.<R, L>instance());
         }
 
         private static class Holder {
 
-            static final FoldLeft<?, ?> INSTANCE = new FoldLeft<>();
+            static final JoinLeft<?, ?> INSTANCE = new JoinLeft<>();
         }
     }
 
-    private static class FoldRight<L, R> implements Func1<Either<L, R>, R> {
+    private static class JoinRight<L, R> implements Func1<Either<L, R>, R> {
 
         @SuppressWarnings("unchecked")
-        static <L, R> FoldRight<L, R> instance() {
-            return (FoldRight<L, R>) Holder.INSTANCE;
+        static <L, R> JoinRight<L, R> instance() {
+            return (JoinRight<L, R>) Holder.INSTANCE;
         }
 
         @Override
         public R call(Either<L, R> lrEither) {
-            return lrEither.fold(Nothing.<L, R>instance(), Identity.<R>instance());
+            return lrEither.join(Nothing.<L, R>instance(), Identity.<R>instance());
         }
 
         private static class Holder {
 
-            static final FoldRight<?, ?> INSTANCE = new FoldRight<>();
+            static final JoinRight<?, ?> INSTANCE = new JoinRight<>();
         }
     }
 
