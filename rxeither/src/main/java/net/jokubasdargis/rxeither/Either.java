@@ -1,5 +1,6 @@
 package net.jokubasdargis.rxeither;
 
+import com.pacoworks.rxsealedunions.Union2;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -10,7 +11,7 @@ import rx.functions.Func1;
  * @param <L> The type of left value.
  * @param <R> The type of right value.
  */
-public abstract class Either<L, R> {
+public abstract class Either<L, R> implements Union2<L, R> {
 
     /**
      * Creates {@link Either} instance for the given value as left.
@@ -39,12 +40,18 @@ public abstract class Either<L, R> {
     public abstract boolean isRight();
 
     /**
+     * @deprecated - use {@link #continued(Action1, Action1)} instead.
+     * <p>
      * Applies left {@link Action1} if this is a Left or right {@link Action1} if this is a Right.
      */
+    @Deprecated
     public abstract void fold(Action1<L> left, Action1<R> right);
 
     /**
+     * @deprecated - use {@link #join(Func1, Func1)}} instead.
+     * <p>
      * Applies left {@link Func1} if this is a Left or right {@link Func1} if this is a Right.
      */
+    @Deprecated
     public abstract <T> T fold(Func1<L, T> left, Func1<R, T> right);
 }

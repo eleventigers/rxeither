@@ -166,7 +166,7 @@ public final class RxEitherTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "deprecation"})
     public void foldLazyAction() {
         Action1<EventA> eventAAction = mock(Action1.class);
         Action1<EventB> eventBAction = mock(Action1.class);
@@ -185,6 +185,24 @@ public final class RxEitherTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    public void continuedLazy() {
+        Action1<EventA> eventAAction = mock(Action1.class);
+        Action1<EventB> eventBAction = mock(Action1.class);
+
+        Observable<Either<EventA, EventB>> either = RxEither.from(eventASubject, eventBSubject);
+
+        either.subscribe(RxEither.continuedLazy(eventAAction, eventBAction));
+
+        eventASubject.onNext(eventA);
+        eventBSubject.onNext(eventB);
+        testScheduler.triggerActions();
+
+        verify(eventAAction).call(eventA);
+        verify(eventBAction).call(eventB);
+    }
+
+    @Test
+    @SuppressWarnings({"unchecked", "deprecation"})
     public void foldLazyFunc() {
         Action1<EventA> eventAAction = mock(Action1.class);
         Func1<EventA, EventA> eventAEventAFunc = mock(Func1.class);
@@ -196,6 +214,27 @@ public final class RxEitherTest {
         Observable<Either<EventA, EventB>> either = RxEither.from(eventASubject, eventBSubject);
 
         either.map(RxEither.foldLazy(eventAEventAFunc, eventBEventAFunc)).subscribe(eventAAction);
+
+        eventASubject.onNext(eventA);
+        eventBSubject.onNext(eventB);
+        testScheduler.triggerActions();
+
+        verify(eventAAction, times(2)).call(eventA);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void joinLazy() {
+        Action1<EventA> eventAAction = mock(Action1.class);
+        Func1<EventA, EventA> eventAEventAFunc = mock(Func1.class);
+        Func1<EventB, EventA> eventBEventAFunc = mock(Func1.class);
+
+        when(eventAEventAFunc.call(eventA)).thenReturn(eventA);
+        when(eventBEventAFunc.call(eventB)).thenReturn(eventA);
+
+        Observable<Either<EventA, EventB>> either = RxEither.from(eventASubject, eventBSubject);
+
+        either.map(RxEither.joinLazy(eventAEventAFunc, eventBEventAFunc)).subscribe(eventAAction);
 
         eventASubject.onNext(eventA);
         eventBSubject.onNext(eventB);
