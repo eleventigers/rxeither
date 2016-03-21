@@ -8,7 +8,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven {
-            url  "http://dl.bintray.com/pakoito/maven"
+            url  "https://dl.bintray.com/pakoito/maven"
         }
     }
 
