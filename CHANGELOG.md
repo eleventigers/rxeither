@@ -2,6 +2,7 @@ Change Log
 ==========
 
 Version 1.2.0 *(20-03-2016)*
+----------------------------
 * Either type is now based on the [Union2](https://github.com/pakoito/RxSealedUnions/blob/e0693f727de4e11e0126dbd64bd3341744914f29/rxsealedunions/src/main/java/com/pacoworks/rxsealedunions/Union2.java) interface from the [RxSealedUnions](https://github.com/pakoito/RxSealedUnions) library.
 * `Fold` variants have been deprecated in favor of Union's `continued` and `join` methods.
 
